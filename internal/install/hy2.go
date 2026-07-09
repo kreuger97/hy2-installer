@@ -58,7 +58,7 @@ func WriteConfig(cfg config.Config) error {
 
 auth:
   type: password
-  password: "%s"
+  password: %s
 
 tls:
   cert: %s

@@ -1,7 +1,9 @@
 package ui
 
 import (
+	"crypto/rand"
 	"fmt"
+	"math/big"
 	"net/url"
 	"os"
 	"os/exec"
@@ -16,6 +18,16 @@ import (
 	"github.com/kreuger97/hy2-installer/internal/config"
 	"github.com/kreuger97/hy2-installer/internal/install"
 )
+
+func generatePassword(length int) string {
+	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	password := make([]byte, length)
+	for i := range password {
+		n, _ := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
+		password[i] = chars[n.Int64()]
+	}
+	return string(password)
+}
 
 type state int
 
@@ -82,7 +94,7 @@ func initialModel() model {
 	pi.Width = 6
 
 	pa := textinput.New()
-	pa.Placeholder = "my-secret-password"
+	pa.Placeholder = "press Enter for random password"
 	pa.CharLimit = 64
 	pa.Width = 30
 	pa.EchoMode = textinput.EchoPassword
@@ -324,7 +336,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case stateAskPassword:
 			switch msg.String() {
 			case "enter":
-				m.cfg.Password = m.passInp.Value()
+				if m.passInp.Value() == "" {
+					m.cfg.Password = generatePassword(16)
+				} else {
+					m.cfg.Password = m.passInp.Value()
+				}
 				m.state = stateAskMasquerade
 				m.yesNoInp.SetValue("")
 				m.yesNoInp.Focus()
@@ -615,7 +631,7 @@ func (m model) askPasswordView() string {
 		Render("Auth Password")
 
 	desc := lipgloss.NewStyle().Foreground(lipgloss.Color("250")).Render(
-		"Set a password for client authentication.",
+		"Set a password for client authentication.\nLeave empty and press Enter to generate a random password.",
 	)
 
 	content := lipgloss.JoinVertical(lipgloss.Left,
