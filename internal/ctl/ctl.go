@@ -13,10 +13,10 @@ import (
 	"github.com/kreuger97/hy2-installer/internal/install"
 )
 
-const Usage = `hy2-installer - Hysteria 2 Server Manager
+const Usage = `hy2tool - Hysteria 2 Server Manager
 
 Usage:
-  hy2-installer <command>
+  hy2tool <command>
 
 Commands:
   install   Run interactive installer

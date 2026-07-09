@@ -1,0 +1,10 @@
+services:
+  hy2-test:
+    build: .
+    container_name: hy2-debian12
+    privileged: true
+    volumes:
+      - .:/app
+    ports:
+      - ":443/udp"
+      - ":443/tcp"
