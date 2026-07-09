@@ -16,20 +16,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	// No args = interactive installer
 	if len(os.Args) < 2 {
+		fmt.Print(ctl.Usage)
+		return
+	}
+
+	switch os.Args[1] {
+	case "install":
 		sigCh := make(chan os.Signal, 1)
 		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-
 		if err := ui.RunWithSignals(sigCh); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
-		return
-	}
-
-	// Subcommands
-	switch os.Args[1] {
 	case "link":
 		ctl.CmdLink()
 	case "status":

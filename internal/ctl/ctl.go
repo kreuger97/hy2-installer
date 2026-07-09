@@ -16,15 +16,16 @@ import (
 const Usage = `hy2-installer - Hysteria 2 Server Manager
 
 Usage:
-  hy2-installer              Run interactive installer
-  hy2-installer <command>    Manage existing installation
+  hy2-installer <command>
 
 Commands:
+  install   Run interactive installer
   link      Show connection link and QR code
   status    Show service status
   start     Start the service
   stop      Stop the service
   restart   Restart the service
+  help      Show this help
 `
 
 func ParseConfig() (port, password, masqueradeURL string) {
@@ -36,31 +37,36 @@ func ParseConfig() (port, password, masqueradeURL string) {
 	lines := strings.Split(string(data), "\n")
 	inMasquerade := false
 	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, "listen:") {
-			val := strings.TrimSpace(strings.TrimPrefix(line, "listen:"))
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "listen:") {
+			val := strings.TrimSpace(strings.TrimPrefix(trimmed, "listen:"))
 			val = strings.TrimPrefix(val, ":")
 			if val != "" {
 				port = val
 			}
 		}
-		if strings.HasPrefix(line, "password:") {
-			val := strings.TrimSpace(strings.TrimPrefix(line, "password:"))
+		if strings.HasPrefix(trimmed, "password:") {
+			val := strings.TrimSpace(strings.TrimPrefix(trimmed, "password:"))
 			val = strings.Trim(val, "\"")
 			if val != "" {
 				password = val
 			}
 		}
-		if line == "masquerade:" {
+		if trimmed == "masquerade:" {
 			inMasquerade = true
 			continue
 		}
 		if inMasquerade {
-			if strings.HasPrefix(line, "url:") {
-				val := strings.TrimSpace(strings.TrimPrefix(line, "url:"))
+			if strings.HasPrefix(trimmed, "url:") {
+				val := strings.TrimSpace(strings.TrimPrefix(trimmed, "url:"))
 				masqueradeURL = val
 			}
-			if !strings.HasPrefix(line, " ") && !strings.HasPrefix(line, "\t") && line != "" {
+			// Detect next top-level key (no indent) to end masquerade section
+			if line != trimmed && line != "" {
+				// Still indented, stay in masquerade
+				continue
+			}
+			if trimmed != "" && !strings.HasPrefix(line, " ") && !strings.HasPrefix(line, "\t") {
 				inMasquerade = false
 			}
 		}
