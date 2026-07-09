@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/kreuger97/hy2-installer/internal/config"
 )
@@ -120,9 +121,18 @@ func ConfigureFirewall(cfg config.Config) error {
 	}
 
 	if cfg.MasqueradeEnabled {
-		httpPort := cfg.MasqueradeHTTPPort
-		if httpPort != "" {
-			cmd = exec.Command("ufw", "allow", httpPort, "tcp")
+		if cfg.MasqueradeHTTPPort != "" {
+			port := strings.TrimPrefix(cfg.MasqueradeHTTPPort, ":")
+			cmd = exec.Command("ufw", "allow", port, "tcp")
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			if err := cmd.Run(); err != nil {
+				return err
+			}
+		}
+		if cfg.MasqueradeHTTPSPort != "" {
+			port := strings.TrimPrefix(cfg.MasqueradeHTTPSPort, ":")
+			cmd = exec.Command("ufw", "allow", port, "tcp")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
 			if err := cmd.Run(); err != nil {

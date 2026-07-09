@@ -248,6 +248,7 @@ func (m model) connectionURI() string {
 	if host == "" {
 		host = "<server-ip>"
 	}
+	sni := config.ParseMasqueradeHost(m.cfg.MasqueradeURL)
 	u := url.URL{
 		Scheme: "hysteria2",
 		User:   url.User(m.cfg.Password),
@@ -255,7 +256,7 @@ func (m model) connectionURI() string {
 		RawQuery: url.Values{
 			"insecure": {"1"},
 			"alpn":     {"h3"},
-			"sni":      {"hy2-server"},
+			"sni":      {sni},
 		}.Encode(),
 	}
 	return u.String()
@@ -796,27 +797,7 @@ func (m model) summaryView() string {
 	uri := m.connectionURI()
 	uriStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("36"))
 	b.WriteString(uriStyle.Render(uri))
-	b.WriteString("\n\n")
-
-	qrLabel := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("69")).Render("QR Code")
-	b.WriteString(qrLabel)
-	b.WriteString("\n\n")
-
-	qr := m.qrCode()
-	if qr != "" {
-		qrLines := strings.Split(qr, "\n")
-		for _, line := range qrLines {
-			b.WriteString("  " + line + "\n")
-		}
-	}
 	b.WriteString("\n")
-
-	quit := lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("36")).
-		Render("  Press Enter or q to quit")
-
-	b.WriteString(quit)
 
 	box := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -824,7 +805,31 @@ func (m model) summaryView() string {
 		Width(60).
 		Render(b.String())
 
-	return "\n" + centerBox(box, m.width)
+	var result strings.Builder
+	result.WriteString("\n")
+	result.WriteString(centerBox(box, m.width))
+	result.WriteString("\n\n")
+
+	qr := m.qrCode()
+	if qr != "" {
+		qrLabel := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("69")).Render("QR Code")
+		result.WriteString(centerBox(qrLabel, m.width))
+		result.WriteString("\n\n")
+		qrLines := strings.Split(qr, "\n")
+		for _, line := range qrLines {
+			result.WriteString(centerBox("  "+line, m.width))
+			result.WriteString("\n")
+		}
+		result.WriteString("\n")
+	}
+
+	quit := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("36")).
+		Render("  Press Enter or q to quit")
+	result.WriteString(centerBox(quit, m.width))
+
+	return result.String()
 }
 
 func centerBox(box string, width int) string {
