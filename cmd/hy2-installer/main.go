@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/kreuger97/hy2-installer/internal/ui"
 )
@@ -13,7 +15,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := ui.Run(); err != nil {
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+
+	if err := ui.RunWithSignals(sigCh); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}

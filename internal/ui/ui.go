@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -793,7 +794,7 @@ func (m model) summaryView() string {
 	b.WriteString("\n\n")
 
 	uri := m.connectionURI()
-	uriStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("36")).Width(46)
+	uriStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("36"))
 	b.WriteString(uriStyle.Render(uri))
 	b.WriteString("\n\n")
 
@@ -820,31 +821,36 @@ func (m model) summaryView() string {
 	box := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		Padding(1, 2).
-		Width(52).
+		Width(60).
 		Render(b.String())
 
 	return "\n" + centerBox(box, m.width)
 }
 
 func centerBox(box string, width int) string {
-	lines := strings.Split(box, "\n")
-	for i, line := range lines {
-		trimmed := strings.TrimRight(line, " ")
-		padding := 0
-		if width > len(trimmed) {
-			padding = (width - len(trimmed)) / 2
-		}
-		if padding > 0 {
-			lines[i] = strings.Repeat(" ", padding) + trimmed
-		} else {
-			lines[i] = trimmed
-		}
+	if width <= 0 {
+		return box
 	}
-	return strings.Join(lines, "\n")
+	return lipgloss.NewStyle().
+		Width(width).
+		Align(lipgloss.Center).
+		Render(box)
 }
 
 func Run() error {
 	p := tea.NewProgram(initialModel(), tea.WithAltScreen())
+	_, err := p.Run()
+	return err
+}
+
+func RunWithSignals(sigCh <-chan os.Signal) error {
+	p := tea.NewProgram(initialModel(), tea.WithAltScreen())
+
+	go func() {
+		<-sigCh
+		p.Quit()
+	}()
+
 	_, err := p.Run()
 	return err
 }
