@@ -260,7 +260,7 @@ func (m model) connectionURI() string {
 	if host == "" {
 		host = "<server-ip>"
 	}
-	sni := config.ParseMasqueradeHost(m.cfg.MasqueradeURL)
+	sni := config.MasqueradeSNI(m.cfg.MasqueradeURL)
 	u := url.URL{
 		Scheme: "hysteria2",
 		User:   url.User(m.cfg.Password),

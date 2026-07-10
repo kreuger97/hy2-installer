@@ -103,7 +103,7 @@ func GetOutboundIP() string {
 }
 
 func BuildLink(port, password, ip, masqueradeURL string) string {
-	sni := config.ParseMasqueradeHost(masqueradeURL)
+	sni := config.MasqueradeSNI(masqueradeURL)
 	u := url.URL{
 		Scheme: "hysteria2",
 		User:   url.User(password),
