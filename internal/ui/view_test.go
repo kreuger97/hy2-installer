@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/kreuger97/hy2-installer/internal/config"
+	"github.com/kreuger97/hy2tool/internal/config"
 )
 
 func TestWelcomeView(t *testing.T) {

@@ -9,8 +9,8 @@ import (
 
 	qrcode "github.com/skip2/go-qrcode"
 
-	"github.com/kreuger97/hy2-installer/internal/config"
-	"github.com/kreuger97/hy2-installer/internal/install"
+	"github.com/kreuger97/hy2tool/internal/config"
+	"github.com/kreuger97/hy2tool/internal/install"
 )
 
 const Usage = `hy2tool - Hysteria 2 Server Manager

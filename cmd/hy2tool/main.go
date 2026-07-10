@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/kreuger97/hy2-installer/internal/ctl"
-	"github.com/kreuger97/hy2-installer/internal/ui"
+	"github.com/kreuger97/hy2tool/internal/ctl"
+	"github.com/kreuger97/hy2tool/internal/ui"
 )
 
 func main() {

@@ -5,7 +5,7 @@ Hysteria 2 server installer and manager.
 ## Install
 
 ```bash
-curl -fsSL -o hy2tool https://github.com/kreuger97/hy2-installer/releases/latest/download/hy2tool_linux_amd64
+curl -fsSL -o hy2tool https://github.com/kreuger97/hy2tool/releases/latest/download/hy2tool_linux_amd64
 chmod +x hy2tool
 sudo ./hy2tool install
 ```

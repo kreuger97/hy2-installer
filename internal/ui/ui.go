@@ -15,8 +15,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	qrcode "github.com/skip2/go-qrcode"
 
-	"github.com/kreuger97/hy2-installer/internal/config"
-	"github.com/kreuger97/hy2-installer/internal/install"
+	"github.com/kreuger97/hy2tool/internal/config"
+	"github.com/kreuger97/hy2tool/internal/install"
 )
 
 func generatePassword(length int) string {

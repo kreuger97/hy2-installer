@@ -1,4 +1,4 @@
-module github.com/kreuger97/hy2-installer
+module github.com/kreuger97/hy2tool
 
 go 1.26
 

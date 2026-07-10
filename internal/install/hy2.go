@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kreuger97/hy2-installer/internal/config"
+	"github.com/kreuger97/hy2tool/internal/config"
 )
 
 func HysteriaInstalled() bool {
